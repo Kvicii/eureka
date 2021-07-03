@@ -32,6 +32,7 @@ import java.util.Set;
  * Note that all configurations are not effective at runtime unless and
  * otherwise specified.
  * </p>
+ * 包含了eureka server需要使用的所有配置项
  *
  * @author Karthik Ranganathan
  *

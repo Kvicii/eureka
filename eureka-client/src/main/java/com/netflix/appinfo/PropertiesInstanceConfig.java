@@ -59,12 +59,7 @@ public abstract class PropertiesInstanceConfig extends AbstractInstanceConfig im
     }
 
     public PropertiesInstanceConfig(String namespace) {
-        this(namespace, new DataCenterInfo() {
-            @Override
-            public Name getName() {
-                return Name.MyOwn;
-            }
-        });
+        this(namespace, () -> DataCenterInfo.Name.MyOwn);
     }
 
     public PropertiesInstanceConfig(String namespace, DataCenterInfo info) {
@@ -77,6 +72,7 @@ public abstract class PropertiesInstanceConfig extends AbstractInstanceConfig im
         appGrpNameFromEnv = ConfigurationManager.getConfigInstance()
                 .getString(FALLBACK_APP_GROUP_KEY, Values.UNKNOWN_APPLICATION);
 
+        // 将eureka-client.properties配置文件中的内容加载到ConfigurationManager中去 然后基于EurekaInstanceConfig对外暴露的接口获取这些配置 并且提供了默认值
         this.configInstance = Archaius1Utils.initConfig(CommonConstants.CONFIG_FILE_NAME);
     }
 

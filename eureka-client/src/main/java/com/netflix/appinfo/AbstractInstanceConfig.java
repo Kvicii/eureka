@@ -50,12 +50,7 @@ public abstract class AbstractInstanceConfig implements EurekaInstanceConfig {
     private static final int SECURE_PORT = 443;
     private static final boolean INSTANCE_ENABLED_ON_INIT = false;
     private static final Pair<String, String> hostInfo = getHostInfo();
-    private DataCenterInfo info = new DataCenterInfo() {
-        @Override
-        public Name getName() {
-            return Name.MyOwn;
-        }
-    };
+    private DataCenterInfo info = () -> DataCenterInfo.Name.MyOwn;
 
     protected AbstractInstanceConfig() {
 

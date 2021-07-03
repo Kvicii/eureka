@@ -18,6 +18,8 @@ import com.netflix.servo.monitor.MonitorConfig;
 
 /**
  * An auth filter for client requests. For now, it only logs supported client identification data from header info
+ * <p>
+ * 负责对请求进行授权认证处理的
  */
 @Singleton
 public class ServerRequestAuthFilter implements Filter {

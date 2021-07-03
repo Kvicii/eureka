@@ -42,6 +42,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     <jsp:include page="navbar.jsp" />
     <div id="content">
       <div class="sectionTitle">Instances currently registered with Eureka</div>
+        <%--    所有的服务实例都会放在这个table中    --%>
         <table id='instances' class="stripeable">
            <thead><tr><th>Application</th><th>AMIs</th><th>Availability Zones</th><th>Status</th></tr></thead>
            <tfoot><tr><th>Application</th><th>AMIs</th><th>Availability Zones</th><th>Status</th></tr></tfoot>

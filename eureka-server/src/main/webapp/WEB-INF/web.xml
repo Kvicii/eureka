@@ -5,9 +5,11 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
 	http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
   <listener>
+    <!--  web应用启动时就会执行 负责对web应用初始化    -->
     <listener-class>com.netflix.eureka.EurekaBootStrap</listener-class>
   </listener>
 
+  <!-- 对每个请求进行处理的Filter -->
   <filter>
     <filter-name>statusFilter</filter-name>
     <filter-class>com.netflix.eureka.StatusFilter</filter-class>
@@ -26,6 +28,11 @@
     <filter-class>com.netflix.eureka.GzipEncodingEnforcingFilter</filter-class>
   </filter>
 
+  <!--  jersey核心filter  -->
+  <!--
+        类似于每个mvc框架 比如说struts2和spring web mvc 都会持有一个自己的核心filter(或者是核心servlet) 配置在web.xml里
+        用了框架之后 相当于就是将web请求的处理入口交给框架了 框架会根据你的配置 自动帮你完成很多共U哦 最后调用你的一些处理逻辑
+   -->
   <filter>
     <filter-name>jersey</filter-name>
     <filter-class>com.sun.jersey.spi.container.servlet.ServletContainer</filter-class>
@@ -49,6 +56,7 @@
     </init-param>
   </filter>
 
+  <!-- statusFilter和requestAuthFilter是通用的 对所有请求有效 -->
   <filter-mapping>
     <filter-name>statusFilter</filter-name>
     <url-pattern>/*</url-pattern>
@@ -59,6 +67,7 @@
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+  <!--  RateLimitingFilter默认不开启 如要开启 需要把<filter-mapping>注释打开 使这个Filter生效  -->
   <!-- Uncomment this to enable rate limiter filter.
   <filter-mapping>
     <filter-name>rateLimitingFilter</filter-name>
@@ -67,17 +76,20 @@
   </filter-mapping>
   -->
 
+  <!-- 对/v2/apps相关的请求才生效 -->
   <filter-mapping>
     <filter-name>gzipEncodingEnforcingFilter</filter-name>
     <url-pattern>/v2/apps</url-pattern>
     <url-pattern>/v2/apps/*</url-pattern>
   </filter-mapping>
 
+  <!-- jersey的filter对所有请求生效 -->
   <filter-mapping>
     <filter-name>jersey</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
+  <!-- Eureka的控制台 展示注册实例 -->
   <welcome-file-list>
     <welcome-file>jsp/status.jsp</welcome-file>
   </welcome-file-list>

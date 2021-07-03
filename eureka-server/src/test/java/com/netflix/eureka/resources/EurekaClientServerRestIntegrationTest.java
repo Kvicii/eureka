@@ -1,7 +1,6 @@
 package com.netflix.eureka.resources;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
@@ -107,7 +106,7 @@ public class EurekaClientServerRestIntegrationTest {
     }
 
     @Test
-    public void testRegistration() throws Exception {
+    public void testRegistration() {
         InstanceInfo instanceInfo = instanceInfoIt.next();
         EurekaHttpResponse<Void> httpResponse = jerseyEurekaClient.register(instanceInfo);
 
@@ -115,7 +114,7 @@ public class EurekaClientServerRestIntegrationTest {
     }
 
     @Test
-    public void testHeartbeat() throws Exception {
+    public void testHeartbeat() {
         // Register first
         InstanceInfo instanceInfo = instanceInfoIt.next();
         jerseyEurekaClient.register(instanceInfo);
@@ -128,7 +127,7 @@ public class EurekaClientServerRestIntegrationTest {
     }
 
     @Test
-    public void testMissedHeartbeat() throws Exception {
+    public void testMissedHeartbeat() {
         InstanceInfo instanceInfo = instanceInfoIt.next();
 
         // Now send heartbeat
@@ -138,7 +137,7 @@ public class EurekaClientServerRestIntegrationTest {
     }
 
     @Test
-    public void testCancelForEntryThatExists() throws Exception {
+    public void testCancelForEntryThatExists() {
         // Register first
         InstanceInfo instanceInfo = instanceInfoIt.next();
         jerseyEurekaClient.register(instanceInfo);
@@ -150,7 +149,7 @@ public class EurekaClientServerRestIntegrationTest {
     }
 
     @Test
-    public void testCancelForEntryThatDoesNotExist() throws Exception {
+    public void testCancelForEntryThatDoesNotExist() {
         // Now cancel
         InstanceInfo instanceInfo = instanceInfoIt.next();
         EurekaHttpResponse<Void> httpResponse = jerseyEurekaClient.cancel(instanceInfo.getAppName(), instanceInfo.getId());
@@ -159,7 +158,7 @@ public class EurekaClientServerRestIntegrationTest {
     }
 
     @Test
-    public void testStatusOverrideUpdateAndDelete() throws Exception {
+    public void testStatusOverrideUpdateAndDelete() {
         // Register first
         InstanceInfo instanceInfo = instanceInfoIt.next();
         jerseyEurekaClient.register(instanceInfo);
@@ -232,13 +231,18 @@ public class EurekaClientServerRestIntegrationTest {
     }
 
     private static void startServer() throws Exception {
-        File warFile = findWar();
+        // File warFile = findWar();
 
         server = new Server(8080);
 
-        WebAppContext webapp = new WebAppContext();
-        webapp.setContextPath("/");
-        webapp.setWar(warFile.getAbsolutePath());
+        WebAppContext webapp = new WebAppContext(new File("./eureka-server/src/main/webapp").getAbsolutePath(), "/");
+        webapp.setDescriptor(new File("./eureka-server/src/main/webapp/WEB-INF/web.xml").getAbsolutePath());
+        webapp.setResourceBase(new File("./eureka-server/src/main/resources").getAbsolutePath());
+        webapp.setClassLoader(Thread.currentThread().getContextClassLoader());
+
+        //WebAppContext webapp = new WebAppContext();
+        // webapp.setContextPath("/");
+        // webapp.setWar(warFile.getAbsolutePath());
         server.setHandler(webapp);
 
         server.start();
@@ -259,12 +263,7 @@ public class EurekaClientServerRestIntegrationTest {
             throw new IllegalStateException("No directory found at any in any pre-configured location: " + Arrays.toString(EUREKA1_WAR_DIRS));
         }
 
-        File[] warFiles = dir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return WAR_PATTERN.matcher(name).matches();
-            }
-        });
+        File[] warFiles = dir.listFiles((dir1, name) -> WAR_PATTERN.matcher(name).matches());
         if (warFiles.length == 0) {
             throw new IllegalStateException("War file not found in directory " + dir);
         }

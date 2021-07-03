@@ -32,6 +32,7 @@ public class EurekaConfigBasedInstanceInfoProvider implements Provider<InstanceI
 
     private final EurekaInstanceConfig config;
 
+    // 当前服务实例本身的一些信息
     private InstanceInfo instanceInfo;
 
     @Inject(optional = true)
@@ -55,6 +56,7 @@ public class EurekaConfigBasedInstanceInfoProvider implements Provider<InstanceI
             }
 
             // Builder the instance information to be registered with eureka server
+			// 静态内部类实现构造器模式
             InstanceInfo.Builder builder = InstanceInfo.Builder.newBuilder(vipAddressResolver);
 
             // set the appropriate id for the InstanceInfo, falling back to datacenter Id if applicable, else hostname
@@ -81,6 +83,7 @@ public class EurekaConfigBasedInstanceInfoProvider implements Provider<InstanceI
                 defaultAddress = config.getIpAddress();
             }
 
+            // 构造复杂对象
             builder.setNamespace(config.getNamespace())
                     .setInstanceId(instanceId)
                     .setAppName(config.getAppname())
@@ -113,6 +116,7 @@ public class EurekaConfigBasedInstanceInfoProvider implements Provider<InstanceI
             }
 
             // Add any user-specific metadata information
+            // 自定义元数据的添加
             for (Map.Entry<String, String> mapEntry : config.getMetadataMap().entrySet()) {
                 String key = mapEntry.getKey();
                 String value = mapEntry.getValue();

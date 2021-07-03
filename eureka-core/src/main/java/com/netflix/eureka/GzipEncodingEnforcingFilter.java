@@ -22,6 +22,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * transparently, there is no longer need to maintain uncompressed content. By adding this filter, Eureka
  * server will accept only GET requests that explicitly support gzip encoding replies. In the coming minor release
  * non-compressed replies will be dropped altogether, so this filter will become required.
+ * <p>
+ * 压缩与编码相关的处理逻辑
  *
  * @author Tomasz Bak
  */
@@ -58,7 +60,7 @@ public class GzipEncodingEnforcingFilter implements Filter {
             @Override
             public Enumeration<String> getHeaders(String name) {
                 if (HttpHeaders.ACCEPT_ENCODING.equals(name)) {
-                    return new EnumWrapper<String>("gzip");
+                    return new EnumWrapper<>("gzip");
                 }
                 return new EnumWrapper<String>(super.getHeaders(name), HttpHeaders.ACCEPT_ENCODING);
             }

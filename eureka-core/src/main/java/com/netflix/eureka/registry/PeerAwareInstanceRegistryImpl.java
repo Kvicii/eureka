@@ -76,6 +76,8 @@ import javax.inject.Singleton;
  * a period specified in
  * {@link com.netflix.eureka.EurekaServerConfig#getWaitTimeInMsWhenSyncEmpty()}.
  * </p>
+ * 当前eureka server启动时会尝试从其他eureka server上拉取注册表信息
+ * 如果拉取失败 就不会再让其他服务实例使用当前eureka server进行服务发现 获取注册表信息
  *
  * <p>
  * One important thing to note about <em>renewals</em>.If the renewal drops more
@@ -84,6 +86,7 @@ import javax.inject.Singleton;
  * {@link com.netflix.eureka.EurekaServerConfig#getRenewalThresholdUpdateIntervalMs()}, eureka
  * perceives this as a danger and stops expiring instances.
  * </p>
+ * 如果当前eureka server获取心跳在一定时间内低于一定的比率 eureka server就会认为是自身出了网络故障 不再摘除任何服务实例 进行保护模式
  *
  * @author Karthik Ranganathan, Greg Kim
  *
@@ -108,11 +111,7 @@ public class PeerAwareInstanceRegistryImpl extends AbstractInstanceRegistry impl
         }
     }
 
-    private static final Comparator<Application> APP_COMPARATOR = new Comparator<Application>() {
-        public int compare(Application l, Application r) {
-            return l.getName().compareTo(r.getName());
-        }
-    };
+    private static final Comparator<Application> APP_COMPARATOR = Comparator.comparing(Application::getName);
 
     private final MeasuredRate numberOfReplicationsLastMin;
 
